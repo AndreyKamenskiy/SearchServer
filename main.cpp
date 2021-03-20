@@ -1,14 +1,20 @@
-#include <iostream>
-
 #include "paginator.h"
-
 #include "search_server.h"
 #include "request_queue.h"
 #include "log_duration.h"
+#include "test_example_functions.h"
+
+#include <iostream>
+
+
+
+
 
 using namespace std;
 
 int main() {
+    test_all();
+
     SearchServer search_server("and in at"s);
     RequestQueue request_queue(search_server);
 
@@ -18,9 +24,7 @@ int main() {
     search_server.AddDocument(4, "big dog sparrow Eugene"s, DocumentStatus::ACTUAL, {1, 3, 2});
     search_server.AddDocument(5, "big dog sparrow Vasiliy"s, DocumentStatus::ACTUAL, {1, 1, 1});
 
-    search_server.MatchDocument("пушистый -пёс"s);
-
-    /*// 1439 запросов с нулевым результатом
+    // 1439 запросов с нулевым результатом
     {
         LOG_DURATION_STREAM("Empty requests", cerr);
         for (int i = 0; i < 1439; ++i) {
@@ -33,7 +37,7 @@ int main() {
     request_queue.AddFindRequest("big collar"s);
     // первый запрос удален, 1437 запросов с нулевым результатом
     request_queue.AddFindRequest("sparrow"s);
-    std::cout << "Total empty requests: "s << request_queue.GetNoResultRequests() << std::endl;*/
+    std::cout << "Total empty requests: "s << request_queue.GetNoResultRequests() << std::endl;
 
 
     return 0;
