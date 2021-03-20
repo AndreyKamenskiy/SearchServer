@@ -6,6 +6,7 @@ using namespace std;
 #include "string_processing.h"
 #include "document.h"
 #include "log_duration.h"
+#include <iostream>
 
     SearchServer::SearchServer(const string& stop_words_text)
         : SearchServer(SplitIntoWords(stop_words_text))
@@ -66,6 +67,25 @@ using namespace std;
             }
         }
         return {matched_words, documents_.at(document_id).status};
+    }
+
+    const map<string, double>& SearchServer::GetWordFrequencies(int document_id) const
+    {
+        map<string, double>* res = new map<string, double>();
+
+        if (documents_.count(document_id) == 0) {
+            //if a document with given id does not exist
+            return *res;
+        }
+
+        for (auto [word, document_freqs] : word_to_document_freqs_) {
+            if (document_freqs.count(document_id) == 0) {
+                // given document does not contain current word 
+                continue;
+            }
+            (*res).emplace(word, document_freqs.at(document_id));
+        }
+        return *res;
     }
 
     bool SearchServer::IsStopWord(const string& word) const {
