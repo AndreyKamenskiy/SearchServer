@@ -22,6 +22,7 @@ using namespace std;
         const double inv_word_count = 1.0 / words.size();
         for (const string& word : words) {
             word_to_document_freqs_[word][document_id] += inv_word_count;
+            document_to_word_freqs_[document_id][word] += inv_word_count;
         }
         documents_.emplace(document_id, DocumentData{ComputeAverageRating(ratings), status});
         document_ids_.push_back(document_id);
@@ -71,21 +72,11 @@ using namespace std;
 
     const map<string, double>& SearchServer::GetWordFrequencies(int document_id) const
     {
-        map<string, double>* res = new map<string, double>();
-
         if (documents_.count(document_id) == 0) {
-            //if a document with given id does not exist
-            return *res;
+           //if a document with given id does not exist
+           return emty_map_;
         }
-
-        for (auto [word, document_freqs] : word_to_document_freqs_) {
-            if (document_freqs.count(document_id) == 0) {
-                // given document does not contain current word 
-                continue;
-            }
-            (*res).emplace(word, document_freqs.at(document_id));
-        }
-        return *res;
+        return document_to_word_freqs_.at(document_id);
     }
 
     bool SearchServer::IsStopWord(const string& word) const {
