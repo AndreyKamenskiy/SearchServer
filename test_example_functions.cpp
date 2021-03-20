@@ -28,10 +28,6 @@ void test_SS_iterators(SearchServer& server) {
 template< typename Map>
 bool isEqual(const Map& m1, const Map& m2) {
     auto pred = [](auto a, auto b) { return a.first == b.first; };
-
-    cout << endl << m1.size() << "-" << m2.size() << endl;
-
-
     return m1.size() == m2.size() && std::equal(m1.begin(), m1.end(), m2.begin(), pred);
 };
 
@@ -42,15 +38,42 @@ void test_SS_GetWordFrequencies(SearchServer& server) {
     assert(server.GetWordFrequencies(10).empty());
 }
 
+void test_SS_RemoveDocument(SearchServer server) {
+
+    int count = server.GetDocumentCount();
+    server.RemoveDocument(1);
+    assert(server.GetWordFrequencies(1).empty());
+    assert(server.GetDocumentCount() == count - 1);
+    assert(find(server.begin(), server.end(), 1) == server.end());
+
+    try{
+        auto& [words, status] = server.MatchDocument("пушистый кот хвост", 1);
+        for (const auto& word : words) {
+            cout << word << endl;
+        }
+        assert(1 == 2);
+    }
+    catch (invalid_argument e) {
+        e.what();
+    }
+
+    auto& docs = server.FindTopDocuments
+    (
+        "пушистый кот хвост",
+        [](int document_id, DocumentStatus document_status, int rating) {
+            return true;
+        }
+    );
+    auto& it = find_if(docs.begin(), docs.end(), [](Document doc) {return doc.id == 1; });
+    assert(docs.end() == it);
+}
+
 void test_all() {
     SearchServer& server = makeSmallServer();
 
     test_SS_iterators(server);
     test_SS_GetWordFrequencies(server);
-
-
-
-
+    test_SS_RemoveDocument(server);
 
 	std::cerr << "All tests passed!!!";
 }

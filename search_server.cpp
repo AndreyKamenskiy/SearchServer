@@ -46,6 +46,9 @@ using namespace std;
 
 
     tuple<vector<string>, DocumentStatus> SearchServer::MatchDocument(const string& raw_query, int document_id) const {
+        if ((document_id < 0) || (documents_.count(document_id) == 0)) {
+            throw invalid_argument("Invalid document_id"s);
+        }
         LOG_DURATION_STREAM("Operation time", cout);
         const auto query = ParseQuery(raw_query);
 
@@ -76,7 +79,20 @@ using namespace std;
             return;
         }
 
+        //delete from documents_;
+        documents_.erase(document_id);
+
+        //delete from documnet_ids_
+        document_ids_.erase(document_id);
+
         //delete from word_to_document_freq_
+        for (auto& [word, freq] : document_to_word_freqs_.at(document_id)) {
+            word_to_document_freqs_.at(word).erase(document_id);
+        }
+
+        //delete from document_to_word_freqs_
+        document_to_word_freqs_.erase(document_id);
+
 
 
 
