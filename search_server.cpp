@@ -25,7 +25,7 @@ using namespace std;
             document_to_word_freqs_[document_id][word] += inv_word_count;
         }
         documents_.emplace(document_id, DocumentData{ComputeAverageRating(ratings), status});
-        document_ids_.push_back(document_id);
+        document_ids_.insert(document_id);
     }
 
     vector<Document> SearchServer::FindTopDocuments(const string& raw_query, DocumentStatus status) const {
@@ -68,6 +68,18 @@ using namespace std;
             }
         }
         return {matched_words, documents_.at(document_id).status};
+    }
+
+    void SearchServer::RemoveDocument(int document_id){
+        if (documents_.count(document_id) == 0) {
+            //if a document with given id does not exist
+            return;
+        }
+
+        //delete from word_to_document_freq_
+
+
+
     }
 
     const map<string, double>& SearchServer::GetWordFrequencies(int document_id) const
