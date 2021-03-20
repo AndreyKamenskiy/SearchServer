@@ -42,9 +42,6 @@ using namespace std;
         return documents_.size();
     }
 
-    int SearchServer::GetDocumentId(int index) const {
-        return document_ids_.at(index);
-    }
 
     tuple<vector<string>, DocumentStatus> SearchServer::MatchDocument(const string& raw_query, int document_id) const {
         LOG_DURATION_STREAM("Operation time", cout);
