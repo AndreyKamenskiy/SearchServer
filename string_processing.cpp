@@ -2,6 +2,15 @@
 #include <vector>
 #include <string>
 
+bool HasSpecialSymbols(const std::string& text) {
+    for (char ch : text) {
+        if (ch >= 0 && ch <= 31) {
+            return true;
+        }
+    }
+    return false;
+}
+
 std::vector<std::string> SplitIntoWords(const std::string& text) {
     std::vector<std::string> words;
     std::string word;

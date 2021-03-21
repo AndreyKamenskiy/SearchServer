@@ -29,14 +29,12 @@ using namespace std;
     }
 
     vector<Document> SearchServer::FindTopDocuments(const string& raw_query, DocumentStatus status) const {
-        LOG_DURATION_STREAM("Operation time", cout);
         return FindTopDocuments(raw_query, [status](int document_id, DocumentStatus document_status, int rating) {
             return document_status == status;
         });
     }
 
     vector<Document> SearchServer::FindTopDocuments(const string& raw_query) const {
-        LOG_DURATION_STREAM("Operation time", cout);
         return FindTopDocuments(raw_query, DocumentStatus::ACTUAL);
     }
 
@@ -92,10 +90,6 @@ using namespace std;
 
         //delete from document_to_word_freqs_
         document_to_word_freqs_.erase(document_id);
-
-
-
-
     }
 
     const map<string, double>& SearchServer::GetWordFrequencies(int document_id) const

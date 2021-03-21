@@ -18,10 +18,10 @@ public:
     explicit SearchServer(const StringContainer& stop_words)
         : stop_words_(MakeUniqueNonEmptyStrings(stop_words))  // Extract non-empty stop words
     {
-        if (!all_of(stop_words_.begin(), stop_words_.end(), IsValidWord)) {
+       /* if (!all_of(stop_words_.begin(), stop_words_.end(), IsValidWord)) {
             using  namespace std;
             throw invalid_argument("Some of stop words are invalid"s);
-        }
+        }*/
     }
 
     explicit SearchServer(const std::string& stop_words_text);

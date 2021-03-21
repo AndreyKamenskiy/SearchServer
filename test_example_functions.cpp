@@ -38,7 +38,7 @@ void test_SS_GetWordFrequencies(SearchServer& server) {
     assert(server.GetWordFrequencies(10).empty());
 }
 
-void test_SS_RemoveDocument(SearchServer server) {
+void test_SS_RemoveDocument(SearchServer& server) {
 
     int count = server.GetDocumentCount();
     server.RemoveDocument(1);
@@ -68,20 +68,31 @@ void test_SS_RemoveDocument(SearchServer server) {
     assert(docs.end() == it);
 }
 
-void test_RemoveDuplicates(SearchServer server) {
+void test_RemoveDuplicates(SearchServer& server) {
     server.AddDocument(5, "ухоженный скворец ухоженный евгений"s, DocumentStatus::ACTUAL, { 9, 5, 4});
     assert(server.GetDocumentCount() == 4);
     RemoveDuplicates(server);
     assert(server.GetDocumentCount() == 3);
 }
 
+void test_query1(SearchServer& server) {
+
+    cout << "testVoid"s << endl;
+    auto response = server.FindTopDocuments("кот -белый"s);
+    for (auto& doc : response) {
+        cout << doc << endl;
+    }
+    cout << "testVoid end" << endl;
+}
+
 void test_all() {
-    SearchServer& server = makeSmallServer();
+    SearchServer server = makeSmallServer();
 
     test_SS_iterators(server);
     test_SS_GetWordFrequencies(server);
     test_SS_RemoveDocument(server);
     test_RemoveDuplicates(server);
 
+    test_query1(server);
 	std::cerr << "All tests passed!!!\n";
 }
