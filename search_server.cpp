@@ -47,7 +47,7 @@ using namespace std;
         if ((document_id < 0) || (documents_.count(document_id) == 0)) {
             throw invalid_argument("Invalid document_id"s);
         }
-        LOG_DURATION_STREAM("Operation time", cout);
+        LOG_DURATION_STREAM("Operation time", std::cerr);
         const auto query = ParseQuery(raw_query);
 
         vector<string> matched_words;
