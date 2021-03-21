@@ -1,5 +1,6 @@
 #include "test_example_functions.h"
 #include "search_server.h"
+#include "remove_duplicates.h"
 #include <iostream>
 #include <cassert>
 #include <map>
@@ -23,7 +24,6 @@ void test_SS_iterators(SearchServer& server) {
     }
     assert(it == server.end());
 }
-
 
 template< typename Map>
 bool isEqual(const Map& m1, const Map& m2) {
@@ -68,12 +68,20 @@ void test_SS_RemoveDocument(SearchServer server) {
     assert(docs.end() == it);
 }
 
+void test_RemoveDuplicates(SearchServer server) {
+    server.AddDocument(5, "ухоженный скворец ухоженный евгений"s, DocumentStatus::ACTUAL, { 9, 5, 4});
+    assert(server.GetDocumentCount() == 4);
+    RemoveDuplicates(server);
+    assert(server.GetDocumentCount() == 3);
+}
+
 void test_all() {
     SearchServer& server = makeSmallServer();
 
     test_SS_iterators(server);
     test_SS_GetWordFrequencies(server);
     test_SS_RemoveDocument(server);
+    test_RemoveDuplicates(server);
 
-	std::cerr << "All tests passed!!!";
+	std::cerr << "All tests passed!!!\n";
 }

@@ -21,3 +21,15 @@ std::vector<std::string> SplitIntoWords(const std::string& text) {
 
     return words;
 }
+
+uint64_t getStringHash(const std::string& word)
+{
+    const uint64_t k = 127;
+    uint64_t m = 1;
+    uint64_t hash = 0;
+    for (char ch : word) {
+        hash += m * std::abs(ch);
+        m = m * k;
+    }
+    return hash;
+}

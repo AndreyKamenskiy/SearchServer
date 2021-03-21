@@ -15,3 +15,6 @@ std::set<std::string> MakeUniqueNonEmptyStrings(const StringContainer& strings) 
     }
     return non_empty_strings;
 }
+
+uint64_t getStringHash(const std::string& word);
+
