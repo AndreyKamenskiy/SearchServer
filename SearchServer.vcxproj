@@ -106,11 +106,13 @@
     <ClCompile Include="request_queue.cpp" />
     <ClCompile Include="search_server.cpp" />
     <ClCompile Include="remove_duplicates.cpp" />
+    <ClCompile Include="process_queries.cpp" />
     <ClCompile Include="string_processing.cpp" />
     <ClCompile Include="test_example_functions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="document.h" />
+    <ClInclude Include="process_queries.h" />
     <ClInclude Include="remove_duplicates.h" />
     <ClInclude Include="log_duration.h" />
     <ClInclude Include="paginator.h" />
