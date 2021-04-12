@@ -5,6 +5,7 @@
 #include <map>
 #include <algorithm>
 #include <cmath>
+#include <execution>
 
 #include "document.h"
 #include "string_processing.h"
@@ -18,10 +19,6 @@ public:
     explicit SearchServer(const StringContainer& stop_words)
         : stop_words_(MakeUniqueNonEmptyStrings(stop_words))  // Extract non-empty stop words
     {
-       /* if (!all_of(stop_words_.begin(), stop_words_.end(), IsValidWord)) {
-            using  namespace std;
-            throw invalid_argument("Some of stop words are invalid"s);
-        }*/
     }
 
     explicit SearchServer(const std::string& stop_words_text);
@@ -60,7 +57,38 @@ public:
 
     std::tuple<std::vector<std::string>, DocumentStatus> MatchDocument(const std::string& raw_query, int document_id) const;
 
-    void RemoveDocument(int document_id);
+
+    template<class ExecutionPolicy>
+    void RemoveDocument(ExecutionPolicy&& policy, int document_id) {
+        if (documents_.count(document_id) == 0) {
+            //if the document with given id does not exist
+            return;
+        }
+
+        //delete from documents_;
+        documents_.erase(document_id);    
+        //delete from documnet_ids_
+        document_ids_.erase(document_id);
+
+        auto& doc_words = document_to_word_freqs_.at(document_id);
+        auto& wtdf = word_to_document_freqs_;
+
+        std::vector<int> temp(doc_words.size());
+        std::transform(policy,
+            doc_words.begin(), doc_words.end(),
+            temp.begin(),
+            [&wtdf, document_id](auto& pairWordFreq) {
+                wtdf.at(pairWordFreq.first).erase(document_id);
+                return 0;
+            }
+            );
+
+        document_to_word_freqs_.erase(document_id);
+    };
+
+    void RemoveDocument(int document_id) {
+        RemoveDocument(std::execution::seq, document_id);
+    }
 
     auto begin() {
         return document_ids_.begin();

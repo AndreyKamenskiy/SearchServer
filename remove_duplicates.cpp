@@ -34,7 +34,7 @@ void RemoveDuplicates(SearchServer& search_server)
 		}
 		cout << endl;*/
 		sort(ids.begin(), ids.end());
-		for (int i = 1; i < ids.size(); ++i) {
+		for (size_t i = 1; i < ids.size(); ++i) {
 			to_delete.push_back(ids[i]);
 		}
 	}

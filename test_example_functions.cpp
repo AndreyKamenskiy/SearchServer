@@ -54,7 +54,7 @@ void test_SS_RemoveDocument(SearchServer& server) {
         assert(1 == 2);
     }
     catch (invalid_argument e) {
-        e.what();
+        cout << e.what();
     }
 
     auto& docs = server.FindTopDocuments

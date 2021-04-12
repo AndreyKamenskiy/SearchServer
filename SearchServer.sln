@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.31112.23
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SearchServer", "SearchServer.vcxproj", "{3880FB7F-18B0-40A2-A35B-01C1764CBE0D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProcessQueriesjoined_Benchmark", "..\ProcessQueriesjoined_Benchmark\ProcessQueriesjoined_Benchmark.vcxproj", "{EA1D3169-99FD-4647-B64C-35073176AFE5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{3880FB7F-18B0-40A2-A35B-01C1764CBE0D}.Release|x64.Build.0 = Release|x64
 		{3880FB7F-18B0-40A2-A35B-01C1764CBE0D}.Release|x86.ActiveCfg = Release|Win32
 		{3880FB7F-18B0-40A2-A35B-01C1764CBE0D}.Release|x86.Build.0 = Release|Win32
+		{EA1D3169-99FD-4647-B64C-35073176AFE5}.Debug|x64.ActiveCfg = Debug|x64
+		{EA1D3169-99FD-4647-B64C-35073176AFE5}.Debug|x64.Build.0 = Debug|x64
+		{EA1D3169-99FD-4647-B64C-35073176AFE5}.Debug|x86.ActiveCfg = Debug|Win32
+		{EA1D3169-99FD-4647-B64C-35073176AFE5}.Debug|x86.Build.0 = Debug|Win32
+		{EA1D3169-99FD-4647-B64C-35073176AFE5}.Release|x64.ActiveCfg = Release|x64
+		{EA1D3169-99FD-4647-B64C-35073176AFE5}.Release|x64.Build.0 = Release|x64
+		{EA1D3169-99FD-4647-B64C-35073176AFE5}.Release|x86.ActiveCfg = Release|Win32
+		{EA1D3169-99FD-4647-B64C-35073176AFE5}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
