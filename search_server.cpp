@@ -71,27 +71,6 @@ using namespace std;
         return {matched_words, documents_.at(document_id).status};
     }
 
-   /* void SearchServer::RemoveDocument(int document_id) {
-        if (documents_.count(document_id) == 0) {
-            //if the document with given id does not exist
-            return;
-        }
-
-        //delete from documents_;
-        documents_.erase(document_id); // map
-
-        //delete from documnet_ids_
-        document_ids_.erase(document_id);// map
-
-        //delete from word_to_document_freq_
-        for (auto& [word, freq] : document_to_word_freqs_.at(document_id)) {
-            word_to_document_freqs_.at(word).erase(document_id);
-        }
-
-        //delete from document_to_word_freqs_
-        document_to_word_freqs_.erase(document_id);
-    }*/
-
     const map<string, double>& SearchServer::GetWordFrequencies(int document_id) const
     {
         if (documents_.count(document_id) == 0) {
