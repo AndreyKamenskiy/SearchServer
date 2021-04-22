@@ -7,6 +7,7 @@ using namespace std;
 #include "document.h"
 #include "log_duration.h"
 #include <iostream>
+#include <execution>
 
     SearchServer::SearchServer(const string& stop_words_text)
         : SearchServer(SplitIntoWords(stop_words_text))
@@ -44,31 +45,7 @@ using namespace std;
 
 
     tuple<vector<string>, DocumentStatus> SearchServer::MatchDocument(const string& raw_query, int document_id) const {
-        if ((document_id < 0) || (documents_.count(document_id) == 0)) {
-            throw invalid_argument("Invalid document_id"s);
-        }
-        LOG_DURATION_STREAM("Operation time", std::cerr);
-        const auto query = ParseQuery(raw_query);
-
-        vector<string> matched_words;
-        for (const string& word : query.plus_words) {
-            if (word_to_document_freqs_.count(word) == 0) {
-                continue;
-            }
-            if (word_to_document_freqs_.at(word).count(document_id)) {
-                matched_words.push_back(word);
-            }
-        }
-        for (const string& word : query.minus_words) {
-            if (word_to_document_freqs_.count(word) == 0) {
-                continue;
-            }
-            if (word_to_document_freqs_.at(word).count(document_id)) {
-                matched_words.clear();
-                break;
-            }
-        }
-        return {matched_words, documents_.at(document_id).status};
+        return SearchServer::MatchDocument(std::execution::seq, raw_query, document_id);
     }
 
     const map<string, double>& SearchServer::GetWordFrequencies(int document_id) const
@@ -133,6 +110,8 @@ using namespace std;
     }
 
     SearchServer::Query SearchServer::ParseQuery(const string& text) const {
+        //todo : change to string_View. to avoid copy of strings.
+
         SearchServer::Query result;
         for (const string& word : SplitIntoWords(text)) {
             const auto query_word = ParseQueryWord(word);

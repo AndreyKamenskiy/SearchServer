@@ -36,10 +36,11 @@ public:
         sort(matched_documents.begin(), matched_documents.end(), [](const Document& lhs, const Document& rhs) {
             if (abs(lhs.relevance - rhs.relevance) < 1e-6) {
                 return lhs.rating > rhs.rating;
-            } else {
+            }
+            else {
                 return lhs.relevance > rhs.relevance;
             }
-        });
+            });
         if (matched_documents.size() > MAX_RESULT_DOCUMENT_COUNT) {
             matched_documents.resize(MAX_RESULT_DOCUMENT_COUNT);
         }
@@ -55,6 +56,62 @@ public:
 
     const std::map<std::string, double>& GetWordFrequencies(int document_id) const;
 
+
+    template<class ExecutionPolicy>
+    std::tuple<std::vector<std::string>, DocumentStatus> MatchDocument(ExecutionPolicy&& policy, const std::string& raw_query, int document_id) const {
+        using namespace std;
+        if ((document_id < 0) || (documents_.count(document_id) == 0)) {
+            throw invalid_argument("Invalid document_id"s);
+        }
+        //LOG_DURATION_STREAM("Operation time", std::cerr);
+        const auto query = ParseQuery(raw_query);
+        vector<string> matched_words;
+        bool findMinus = false;
+        auto& word_to_document_freqs = word_to_document_freqs_;
+
+        {
+            std::vector<int> temp(query.minus_words.size());
+            std::transform(policy,
+                query.minus_words.begin(), query.minus_words.end(),
+                temp.begin(),
+                [&findMinus, document_id, &word_to_document_freqs](auto& minusWord) {
+                    if (!findMinus
+                        && word_to_document_freqs.count(minusWord)
+                        && word_to_document_freqs.at(minusWord).count(document_id)) {
+                        findMinus = true;
+                    }
+                    return 0;
+                }
+            );
+        }
+        if (findMinus) {
+            return { matched_words, documents_.at(document_id).status };
+        }
+        {
+            using namespace std;
+            const std::string emptyString = ""s;
+            std::vector<const std::string*> temp(query.plus_words.size());
+            std::transform(policy,
+                query.plus_words.begin(), query.plus_words.end(),
+                temp.begin(),
+                [&emptyString, document_id, &word_to_document_freqs](const std::string& plusWord) {
+                    if (word_to_document_freqs.count(plusWord)
+                        && word_to_document_freqs.at(plusWord).count(document_id)) {
+                        return &plusWord;
+                    }
+                    return &emptyString;
+                }
+            );
+            for (const string* curr : temp) {
+                if (curr != &emptyString) {
+                    matched_words.push_back(*curr);
+                }
+            }
+        }
+        return { matched_words, documents_.at(document_id).status };
+    }
+
+
     std::tuple<std::vector<std::string>, DocumentStatus> MatchDocument(const std::string& raw_query, int document_id) const;
 
 
@@ -66,7 +123,7 @@ public:
         }
 
         //delete from documents_;
-        documents_.erase(document_id);    
+        documents_.erase(document_id);
         //delete from documnet_ids_
         document_ids_.erase(document_id);
 
@@ -81,10 +138,10 @@ public:
                 wtdf.at(pairWordFreq.first).erase(document_id);
                 return 0;
             }
-            );
+        );
 
         document_to_word_freqs_.erase(document_id);
-    };
+    }
 
     void RemoveDocument(int document_id) {
         RemoveDocument(std::execution::seq, document_id);
@@ -112,7 +169,7 @@ private:
     std::set<int> document_ids_;
 
     const std::map<std::string, double> emty_map_;
-    
+
 
     bool IsStopWord(const std::string& word) const;
 
@@ -166,7 +223,7 @@ private:
 
         std::vector<Document> matched_documents;
         for (const auto [document_id, relevance] : document_to_relevance) {
-            matched_documents.push_back({document_id, relevance, documents_.at(document_id).rating});
+            matched_documents.push_back({ document_id, relevance, documents_.at(document_id).rating });
         }
         return matched_documents;
     }
