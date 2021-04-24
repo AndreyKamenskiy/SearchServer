@@ -76,7 +76,7 @@ public:
         //LOG_DURATION_STREAM("Operation time", std::cerr);
         const auto query = ParseQuery(raw_query);
         vector<string_view> matched_words;
-        /*bool findMinus = false;
+        bool findMinus = false;
         auto& word_to_document_freqs = word_to_document_freqs_;
         {
             std::vector<int> temp(query.minus_words.size());
@@ -99,7 +99,7 @@ public:
         {
             using namespace std;
             const std::string_view emptyStringView = ""s;
-            std::vector<const std::string_view> temp(query.plus_words.size());
+            std::vector<std::string_view> temp(query.plus_words.size(), emptyStringView);
             std::transform(policy,
                 query.plus_words.begin(), query.plus_words.end(),
                 temp.begin(),
@@ -116,7 +116,7 @@ public:
                     matched_words.push_back(curr);
                 }
             }
-        }*/
+        }
         return { matched_words, documents_.at(document_id).status };
     }
 
