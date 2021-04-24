@@ -35,6 +35,11 @@ using namespace std;
         document_ids_.insert(document_id);
     }
 
+    void SearchServer::AddDocument(int document_id, const string_view& document_view, DocumentStatus status, const vector<int>& ratings) {
+
+    }
+
+
     vector<Document> SearchServer::FindTopDocuments(const string& raw_query, DocumentStatus status) const {
         return FindTopDocuments(raw_query, [status](int document_id, DocumentStatus document_status, int rating) {
             return document_status == status;
