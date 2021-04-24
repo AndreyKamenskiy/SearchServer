@@ -24,7 +24,7 @@ std::vector<std::string_view> SplitIntoWords(const std::string_view text) {
     return words;
 }
 
-uint64_t getStringHash(const std::string& word)
+uint64_t getStringHash(const std::string_view& word)
 {
     const uint64_t k = 127;
     uint64_t m = 1;

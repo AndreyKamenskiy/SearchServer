@@ -7,9 +7,9 @@
 #include <vector>
 
 
-uint64_t getDocumentHash(const std::map<std::string, double>& word_freq) {
+uint64_t getDocumentHash(const std::map<std::string_view, double>& word_freq) {
 	uint64_t hash = 0;
-	for (const std::pair<std::string, double>& item : word_freq) {
+	for (const std::pair<std::string_view, double>& item : word_freq) {
 		hash ^= getStringHash(item.first);
 	}
 	return hash;
@@ -29,10 +29,6 @@ void RemoveDuplicates(SearchServer& search_server)
 		if (ids.size() < 2) {
 			continue;
 		}
-		/*for (int i : ids) {
-			cout << i << ' ';
-		}
-		cout << endl;*/
 		sort(ids.begin(), ids.end());
 		for (size_t i = 1; i < ids.size(); ++i) {
 			to_delete.push_back(ids[i]);

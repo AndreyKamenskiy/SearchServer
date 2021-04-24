@@ -31,5 +31,5 @@ std::set<std::string_view> MakeUniqueNonEmptyStrings(const StringViewContainer& 
     return non_empty_strings;
 }
 
-uint64_t getStringHash(const std::string& word);
+uint64_t getStringHash(const std::string_view& word);
 
