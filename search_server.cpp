@@ -62,21 +62,19 @@ using namespace std;
         return stop_words_.count(word) > 0;
     }
 
-    bool SearchServer::IsValidWord(const string& word) {
+    bool SearchServer::IsValidWord(const string_view& word) {
         // A valid word must not contain special characters
-        return none_of(word.begin(), word.end(), [](char c) {
-            return c >= '\0' && c < ' ';
-        });
+        return HasSpecialSymbols(word);
     }
 
-    vector<string> SearchServer::SplitIntoWordsNoStop(const string& text) const {
+    vector<string> SearchServer::SplitIntoWordsNoStop(const string_view& text) const {
         vector<string> words;
-        for (const string& word : SplitIntoWords(text)) {
+        for (const string_view& word : SplitIntoWords(text)) {
             if (!IsValidWord(word)) {
-                throw invalid_argument("Word "s + word + " is invalid"s);
+                throw invalid_argument("Word "s + static_cast<string>(word) + " is invalid"s);
             }
-            if (!IsStopWord(word)) {
-                words.push_back(word);
+            if (!IsStopWord(static_cast<string>(word))) {
+                words.push_back(static_cast<string>(word));
             }
         }
         return words;

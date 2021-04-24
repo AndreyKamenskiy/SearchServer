@@ -16,11 +16,14 @@ const int MAX_RESULT_DOCUMENT_COUNT = 5;
 
 class SearchServer {
 public:
-    template <typename StringContainer>
-    explicit SearchServer(const StringContainer& stop_words)
+    template <typename StringViewContainer>
+    explicit SearchServer(const StringViewContainer& stop_words)
         : stop_words_(MakeUniqueNonEmptyStrings(stop_words))  // Extract non-empty stop words
     {
     }
+
+    // возможно придется добавить конструктор, который будт принимать контейнер строк и переделывать его в 
+    // контейнер string_view
 
     explicit SearchServer(const std::string_view stop_words_text);
 
@@ -174,9 +177,9 @@ private:
 
     bool IsStopWord(const std::string& word) const;
 
-    static bool IsValidWord(const std::string& word);
+    static bool IsValidWord(const std::string_view& word);
 
-    std::vector<std::string> SplitIntoWordsNoStop(const std::string& text) const;
+    std::vector<std::string> SplitIntoWordsNoStop(const std::string_view& text) const;
 
     static int ComputeAverageRating(const std::vector<int>& ratings);
 

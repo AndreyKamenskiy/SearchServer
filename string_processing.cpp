@@ -3,15 +3,6 @@
 #include <string>
 #include <string_view>
 
-bool HasSpecialSymbols(const std::string& text) {
-    for (char ch : text) {
-        if (ch >= 0 && ch <= 31) {
-            return true;
-        }
-    }
-    return false;
-}
-
 std::vector<std::string_view> SplitIntoWords(const std::string_view text) {
     std::vector<std::string_view> words;
     size_t word_begin = 0;

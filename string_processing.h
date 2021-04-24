@@ -4,21 +4,25 @@
 #include <set>
 #include <stdexcept>
 
-std::vector<std::string> SplitIntoWords(const std::string_view text);
+std::vector<std::string_view> SplitIntoWords(const std::string_view text);
 
-bool HasSpecialSymbols(const std::string& text);
+bool HasSpecialSymbols(const std::string_view word) {
+    // A valid word must not contain special characters
+    return none_of(word.begin(), word.end(), [](char c) {
+        return c >= '\0' && c < ' ';
+        });
+}
 
-template <typename StringContainer>
-std::set<std::string> MakeUniqueNonEmptyStrings(const StringContainer& strings) {
+template <typename StringViewContainer>
+std::set<std::string> MakeUniqueNonEmptyStrings(const StringViewContainer& views) {
     std::set<std::string> non_empty_strings;
-    for (const std::string& str : strings) {
-        if (HasSpecialSymbols(str)) {
+    for (const auto& view : views) {
+        if (HasSpecialSymbols(view)) {
             using namespace std;
-            throw invalid_argument("Stop words has illegal symbols in word: "s + str);
+            throw invalid_argument("Stop words has illegal symbols in word: "s + view);
         }
-
-        if (!str.empty()) {
-            non_empty_strings.insert(str);
+        if (!view.empty()) {
+            non_empty_strings.insert(static_cast<const string>(view));
         }
     }
     return non_empty_strings;
