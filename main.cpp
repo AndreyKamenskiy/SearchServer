@@ -15,7 +15,7 @@ int main() {
     //SearchServer server1();
 
 
-    SearchServer search_server("and with");
+    SearchServer search_server(string_view("and with"));
 
     int id = 0;
     for (

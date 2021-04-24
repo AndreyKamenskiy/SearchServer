@@ -195,7 +195,7 @@ private:
         std::set<std::string> plus_words;
         std::set<std::string> minus_words;
     };
-    Query ParseQuery(const std::string& text) const;
+    Query ParseQuery(const std::string_view& text) const;
 
 
     double ComputeWordInverseDocumentFreq(const std::string& word) const;

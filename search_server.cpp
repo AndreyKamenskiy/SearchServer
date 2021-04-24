@@ -108,11 +108,11 @@ using namespace std;
         return {word, is_minus, IsStopWord(word)};
     }
 
-    SearchServer::Query SearchServer::ParseQuery(const string& text) const {
+    SearchServer::Query SearchServer::ParseQuery(const string_view& text) const {
         //todo : change to string_View. to avoid copy of strings.
 
         SearchServer::Query result;
-        for (const string& word : SplitIntoWords(text)) {
+        for (const string_view& word : SplitIntoWords(text)) {
             const auto query_word = ParseQueryWord(word);
             if (!query_word.is_stop) {
                 if (query_word.is_minus) {
