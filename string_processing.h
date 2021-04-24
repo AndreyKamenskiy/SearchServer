@@ -3,12 +3,14 @@
 #include <string>
 #include <set>
 #include <stdexcept>
+#include <algorithm>
 
 std::vector<std::string_view> SplitIntoWords(const std::string_view text);
 
-bool HasSpecialSymbols(const std::string_view word) {
+template <typename StringWithIterators>
+bool HasSpecialSymbols(const StringWithIterators word) {
     // A valid word must not contain special characters
-    return none_of(word.begin(), word.end(), [](char c) {
+    return std::none_of(word.begin(), word.end(), [](char c) {
         return c >= '\0' && c < ' ';
         });
 }
@@ -22,7 +24,7 @@ std::set<std::string> MakeUniqueNonEmptyStrings(const StringViewContainer& views
             throw invalid_argument("Stop words has illegal symbols in word: "s + view);
         }
         if (!view.empty()) {
-            non_empty_strings.insert(static_cast<const string>(view));
+            non_empty_strings.insert(string(view.begin(), view.end()));
         }
     }
     return non_empty_strings;
