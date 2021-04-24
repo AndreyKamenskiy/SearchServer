@@ -3,6 +3,7 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <list>
 #include <algorithm>
 #include <cmath>
 #include <execution>
@@ -164,6 +165,9 @@ private:
         DocumentStatus status;
     };
 
+    std::list<std::string> words_;
+    std::set<std::string_view> all_words_;
+
     const std::set<std::string> stop_words_;
 
     std::map<std::string, std::map<int, double>> word_to_document_freqs_;
@@ -202,7 +206,7 @@ private:
     template <typename DocumentPredicate>
     std::vector<Document> FindAllDocuments(const Query& query, DocumentPredicate document_predicate) const {
         std::map<int, double> document_to_relevance;
-        for (const std::string& word : query.plus_words) {
+        for (const std::string_view& word : query.plus_words) {
             if (word_to_document_freqs_.count(word) == 0) {
                 continue;
             }
@@ -215,7 +219,7 @@ private:
             }
         }
 
-        for (const std::string& word : query.minus_words) {
+        for (const std::string_view& word : query.minus_words) {
             if (word_to_document_freqs_.count(word) == 0) {
                 continue;
             }
