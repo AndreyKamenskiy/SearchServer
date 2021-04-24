@@ -22,7 +22,7 @@ std::set<std::string_view> MakeUniqueNonEmptyStrings(const StringViewContainer& 
     for (const std::string_view view : views) {
         if (HasSpecialSymbols(view)) {
             using namespace std;
-            throw invalid_argument("Stop words has illegal symbols in word: "s + view);
+            throw invalid_argument("Stop words has illegal symbols in word: "s + static_cast<std::string>(view));
         }
         if (!view.empty()) {
             non_empty_strings.insert(string(view.begin(), view.end()));

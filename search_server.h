@@ -68,26 +68,25 @@ public:
 
 
     template<class ExecutionPolicy>
-    std::tuple<std::vector<std::string>, DocumentStatus> MatchDocument(ExecutionPolicy&& policy, const std::string& raw_query, int document_id) const {
+    std::tuple<std::vector<std::string_view>, DocumentStatus> MatchDocument(ExecutionPolicy&& policy, const std::string_view& raw_query, int document_id) const {
         using namespace std;
         if ((document_id < 0) || (documents_.count(document_id) == 0)) {
             throw invalid_argument("Invalid document_id"s);
         }
         //LOG_DURATION_STREAM("Operation time", std::cerr);
         const auto query = ParseQuery(raw_query);
-        vector<string> matched_words;
+        vector<string_view> matched_words;
         bool findMinus = false;
         auto& word_to_document_freqs = word_to_document_freqs_;
-
         {
             std::vector<int> temp(query.minus_words.size());
             std::transform(policy,
                 query.minus_words.begin(), query.minus_words.end(),
                 temp.begin(),
                 [&findMinus, document_id, &word_to_document_freqs](auto& minusWord) {
-                    if (!findMinus
-                        && word_to_document_freqs.count(minusWord)
-                        && word_to_document_freqs.at(minusWord).count(document_id)) {
+                    if (!findMinus // если еще не нашли минус слово
+                        && word_to_document_freqs.count(minusWord) // если такое слово есть в документах
+                        && word_to_document_freqs.at(minusWord).count(document_id)) { // если оно есть в искомом документе
                         findMinus = true;
                     }
                     return 0;
@@ -99,31 +98,36 @@ public:
         }
         {
             using namespace std;
-            const std::string emptyString = ""s;
-            std::vector<const std::string*> temp(query.plus_words.size());
+            const std::string_view emptyStringView = ""s;
+            std::vector<const std::string_view> temp(query.plus_words.size());
             std::transform(policy,
                 query.plus_words.begin(), query.plus_words.end(),
                 temp.begin(),
-                [&emptyString, document_id, &word_to_document_freqs](const std::string& plusWord) {
+                [&emptyStringView, document_id, &word_to_document_freqs](const std::string_view& plusWord) {
                     if (word_to_document_freqs.count(plusWord)
                         && word_to_document_freqs.at(plusWord).count(document_id)) {
-                        return &plusWord;
+                        return plusWord;
                     }
-                    return &emptyString;
+                    return emptyStringView;
                 }
             );
-            for (const string* curr : temp) {
-                if (curr != &emptyString) {
-                    matched_words.push_back(*curr);
+            for (const string_view& curr : temp) {
+                if (curr != emptyStringView) {
+                    matched_words.push_back(curr);
                 }
             }
         }
         return { matched_words, documents_.at(document_id).status };
     }
 
+    std::tuple<std::vector<std::string_view>, DocumentStatus> MatchDocument(const std::string_view& raw_query, int document_id) const;
 
-    std::tuple<std::vector<std::string>, DocumentStatus> MatchDocument(const std::string& raw_query, int document_id) const;
+    template<class ExecutionPolicy>
+    std::tuple<std::vector<std::string_view>, DocumentStatus> MatchDocument(ExecutionPolicy&& policy, const std::string& raw_query, int document_id) const {
+        return MatchDocument(policy, static_cast<string_view>(raw_query), document_id);
+    }
 
+    std::tuple<std::vector<std::string_view>, DocumentStatus> MatchDocument(const std::string& raw_query, int document_id) const;
 
     template<class ExecutionPolicy>
     void RemoveDocument(ExecutionPolicy&& policy, int document_id) {
@@ -254,10 +258,10 @@ private:
                 word = string_view(words_.back());
             }
             else {
-                word = all_words_.at(word);
+                word = *all_words_.find(word);
             }
         }
-        return cont;
+        return words;
     }
 
 };
