@@ -23,8 +23,13 @@ public:
 
     template <typename StringViewContainer>
     explicit SearchServer(const StringViewContainer& stop_words)
-        : stop_words_(SearchServer::saveUniqueWords(MakeUniqueNonEmptyStrings(stop_words)))
+        //: stop_words_(SearchServer::saveUniqueWords(MakeUniqueNonEmptyStrings(stop_words)))
     {
+        const std::set<std::string_view> unique = MakeUniqueNonEmptyStrings(stop_words);
+        std::set<std::string_view> saved = saveUniqueWords(unique);
+        //stop_words_ = std::move(saved);
+
+
     }
 
     explicit SearchServer(const std::string stop_words_text);

@@ -12,12 +12,13 @@ template <typename StringWithIterators>
 bool HasSpecialSymbols(const StringWithIterators word) {
     // A valid word must not contain special characters
     return std::none_of(word.begin(), word.end(), [](char c) {
-        return c >= '\0' && c < ' ';
+        bool qwe = c >= '\0' && c < ' ';
+        return qwe;
         });
 }
 
 template <typename StringViewContainer>
-std::set<std::string_view> MakeUniqueNonEmptyStrings(const StringViewContainer& views) {
+std::set<std::string_view> MakeUniqueNonEmptyStrings(const StringViewContainer views) {
     std::set<std::string_view> non_empty_strings;
     for (const std::string_view view : views) {
         if (HasSpecialSymbols(view)) {
