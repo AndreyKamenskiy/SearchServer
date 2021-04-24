@@ -58,9 +58,9 @@ public:
         return matched_documents;
     }
 
-    std::vector<Document> FindTopDocuments(const std::string& raw_query, DocumentStatus status) const;
+    std::vector<Document> FindTopDocuments(const std::string_view& raw_query, DocumentStatus status) const;
 
-    std::vector<Document> FindTopDocuments(const std::string& raw_query) const;
+    std::vector<Document> FindTopDocuments(const std::string_view& raw_query) const;
 
     int GetDocumentCount() const;
 
