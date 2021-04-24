@@ -76,7 +76,7 @@ public:
         //LOG_DURATION_STREAM("Operation time", std::cerr);
         const auto query = ParseQuery(raw_query);
         vector<string_view> matched_words;
-        bool findMinus = false;
+        /*bool findMinus = false;
         auto& word_to_document_freqs = word_to_document_freqs_;
         {
             std::vector<int> temp(query.minus_words.size());
@@ -116,18 +116,18 @@ public:
                     matched_words.push_back(curr);
                 }
             }
-        }
+        }*/
         return { matched_words, documents_.at(document_id).status };
     }
 
     std::tuple<std::vector<std::string_view>, DocumentStatus> MatchDocument(const std::string_view& raw_query, int document_id) const;
 
-    template<class ExecutionPolicy>
+    /*template<class ExecutionPolicy>
     std::tuple<std::vector<std::string_view>, DocumentStatus> MatchDocument(ExecutionPolicy&& policy, const std::string& raw_query, int document_id) const {
         return MatchDocument(policy, static_cast<string_view>(raw_query), document_id);
     }
 
-    std::tuple<std::vector<std::string_view>, DocumentStatus> MatchDocument(const std::string& raw_query, int document_id) const;
+    std::tuple<std::vector<std::string_view>, DocumentStatus> MatchDocument(const std::string& raw_query, int document_id) const;*/
 
     template<class ExecutionPolicy>
     void RemoveDocument(ExecutionPolicy&& policy, int document_id) {
@@ -250,18 +250,19 @@ private:
     // сохраняет отсутствующие слова 
     // меняет words так, чтобы он ссылался на сохраненнные в сервере слова.
     template <typename StringViewContainer> 
-    StringViewContainer saveUniqueWords(StringViewContainer& words) {
+    std::set<string_view> saveUniqueWords(const StringViewContainer& words) {
+        std::set<string_view> saved;
         for (std::string_view& word : words) {
             if (all_words_.count(word) == 0) {
                 words_.push_back(static_cast<string>(word));
                 all_words_.insert(words_.back());
-                word = string_view(words_.back());
+                saved.insert(string_view(words_.back()));
             }
             else {
-                word = *all_words_.find(word);
+                aved.insert(*all_words_.find(word));
             }
         }
-        return words;
+        return saved;
     }
 
 };

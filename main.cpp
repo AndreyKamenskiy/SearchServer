@@ -39,7 +39,7 @@ int main() {
     }
 
     {
-        const auto [words, status] = search_server.MatchDocument(execution::seq, query, 2);
+        const auto [words, status] = search_server.MatchDocument(execution::seq, string_view(query), 2);
         cout << words.size() << " words for document 2"s << endl;
         // 2 words for document 2
     }
