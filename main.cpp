@@ -14,8 +14,12 @@ int main() {
     //string stop_words = "and with"s;
     //SearchServer server1();
 
+    
+    //SearchServer search_server(string_view("and with"));
 
-    SearchServer search_server(string_view("and with"));
+    string stops = "and with"s;
+    string_view view(stops);
+    SearchServer search_server(view);
 
     int id = 0;
     for (

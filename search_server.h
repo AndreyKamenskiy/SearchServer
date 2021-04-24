@@ -34,7 +34,7 @@ public:
 
     explicit SearchServer(const std::string stop_words_text);
 
-    explicit SearchServer(const std::string_view stop_words_view);
+    explicit SearchServer(const std::string_view& stop_words_view);
 
     void AddDocument(int document_id, const std::string& document, DocumentStatus status, const std::vector<int>& ratings);
 

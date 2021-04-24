@@ -10,7 +10,7 @@ using namespace std;
 #include <execution>
 #include <string_view>
 
-    SearchServer::SearchServer(const string_view stop_words_view)
+    SearchServer::SearchServer(const string_view& stop_words_view)
         : SearchServer(SplitIntoWords(stop_words_view))
     {
     }
@@ -78,7 +78,7 @@ using namespace std;
 
     bool SearchServer::IsValidWord(const string_view& word) {
         // A valid word must not contain special characters
-        return HasSpecialSymbols(word);
+        return !HasSpecialSymbols(word);
     }
 
     vector<string_view> SearchServer::SplitIntoWordsNoStop(const string_view& text) const {
