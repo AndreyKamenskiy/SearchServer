@@ -250,12 +250,26 @@ private:
     // принимает контейнер из string_view, проверяет есть ли такие слова в базе сервера (words_ и all_words);
     // сохраняет отсутствующие слова 
     // меняет words так, чтобы он ссылался на сохраненнные в сервере слова.
-    template <typename StringViewContainer> 
-    std::set<std::string_view> saveUniqueWords(const StringViewContainer& words) {
+    std::vector<std::string_view> saveUniqueWords(const std::vector<std::string_view>& words) {
+        std::vector<std::string_view> saved;
+        for (const std::string_view& word : words) {
+            if (all_words_.count(word) == 0) {
+                words_.push_back(static_cast<std::string>(word));
+                all_words_.insert(words_.back());
+                saved.push_back(std::string_view(words_.back()));
+            }
+            else {
+                saved.push_back(*all_words_.find(word));
+            }
+        }
+        return saved;
+    }
+
+    std::set<std::string_view> saveUniqueWords(const std::set<std::string_view>& words) {
         std::set<std::string_view> saved;
         for (const std::string_view& word : words) {
             if (all_words_.count(word) == 0) {
-                words_.push_back(static_cast<string>(word));
+                words_.push_back(static_cast<std::string>(word));
                 all_words_.insert(words_.back());
                 saved.insert(std::string_view(words_.back()));
             }
@@ -265,5 +279,7 @@ private:
         }
         return saved;
     }
+
+
 
 };

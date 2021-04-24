@@ -27,7 +27,7 @@ void test_SS_iterators(SearchServer& server) {
 
 template< typename Map>
 bool isEqual(const Map& m1, const Map& m2) {
-    auto pred = [](auto a, auto b) { return a.first == b.first; };
+    auto pred = [](auto a, auto b) { return a.first == b.first && a.second == b.second; };
     return m1.size() == m2.size() && std::equal(m1.begin(), m1.end(), m2.begin(), pred);
 };
 
