@@ -23,7 +23,8 @@ public:
 
     template <typename StringViewContainer>
     explicit SearchServer(const StringViewContainer& stop_words)
-        : stop_words_(MakeUniqueNonEmptyStrings(stop_words))  // Extract non-empty stop words
+        : stop_words_(SearchServer::saveUniqueWords(MakeUniqueNonEmptyStrings(stop_words)))
+
     {
     }
 

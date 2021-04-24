@@ -17,8 +17,8 @@ bool HasSpecialSymbols(const StringWithIterators word) {
 }
 
 template <typename StringViewContainer>
-std::set<std::string> MakeUniqueNonEmptyStrings(const StringViewContainer& views) {
-    std::set<std::string> non_empty_strings;
+std::set<std::string_view> MakeUniqueNonEmptyStrings(const StringViewContainer& views) {
+    std::set<std::string_view> non_empty_strings;
     for (const std::string_view view : views) {
         if (HasSpecialSymbols(view)) {
             using namespace std;

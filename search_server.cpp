@@ -11,12 +11,12 @@ using namespace std;
 #include <string_view>
 
     SearchServer::SearchServer(const string_view stop_words_view)
-        : SearchServer(SearchServer::saveUniqueWords(SplitIntoWords(stop_words_view)))
+        : SearchServer(SplitIntoWords(stop_words_view))
     {
     }
 
     SearchServer::SearchServer(const string stop_words_text)
-        : SearchServer(SearchServer::saveUniqueWords(SplitIntoWords(stop_words_text)))
+        : SearchServer(SplitIntoWords(stop_words_text))
     {
     }
 
@@ -77,7 +77,7 @@ using namespace std;
         return HasSpecialSymbols(word);
     }
 
-    vector<string> SearchServer::SplitIntoWordsNoStop(const string_view& text) const {
+    vector<string_view> SearchServer::SplitIntoWordsNoStop(const string_view& text) const {
         vector<string> words;
         for (const string_view& word : SplitIntoWords(text)) {
             if (!IsValidWord(word)) {
