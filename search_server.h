@@ -24,7 +24,6 @@ public:
     template <typename StringViewContainer>
     explicit SearchServer(const StringViewContainer& stop_words)
         : stop_words_(SearchServer::saveUniqueWords(MakeUniqueNonEmptyStrings(stop_words)))
-
     {
     }
 
@@ -37,8 +36,8 @@ public:
     void AddDocument(int document_id, const std::string_view& document, DocumentStatus status, const std::vector<int>& ratings);
 
     template <typename DocumentPredicate>
-    std::vector<Document> FindTopDocuments(const std::string& raw_query, DocumentPredicate document_predicate) const {
-        LOG_DURATION_STREAM("Operation time", std::cerr);
+    std::vector<Document> FindTopDocuments(const std::string_view& raw_query, DocumentPredicate document_predicate) const {
+        //LOG_DURATION_STREAM("Operation time", std::cerr);
         using namespace std;
         const auto query = ParseQuery(raw_query);
 
@@ -208,7 +207,7 @@ private:
     Query ParseQuery(const std::string_view& text) const;
 
 
-    double ComputeWordInverseDocumentFreq(const std::string& word) const;
+    double ComputeWordInverseDocumentFreq(const std::string_view& word) const;
 
     template <typename DocumentPredicate>
     std::vector<Document> FindAllDocuments(const Query& query, DocumentPredicate document_predicate) const {

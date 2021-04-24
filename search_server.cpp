@@ -133,7 +133,7 @@ using namespace std;
     }
 
 
-    double SearchServer::ComputeWordInverseDocumentFreq(const string& word) const {
+    double SearchServer::ComputeWordInverseDocumentFreq(const string_view& word) const {
         return log(GetDocumentCount() * 1.0 / word_to_document_freqs_.at(word).size());
     }
 
