@@ -33,7 +33,8 @@ bool isEqual(const Map& m1, const Map& m2) {
 
 void test_SS_GetWordFrequencies(SearchServer& server) {
     const map<string_view, double>& word_freq = server.GetWordFrequencies(1);
-    map<string_view, double> map1{ {"пушистый"s, 0.5}, { "кот"s, 0.25 }, { "хвост"s, 0.25 } };
+    string words[] = { "пушистый"s, "кот"s, "хвост"s };
+    map<string_view, double> map1{ {words[0], 0.5}, { words[1], 0.25 }, { words[2], 0.25 } };
     assert(isEqual(word_freq, map1));
     assert(server.GetWordFrequencies(10).empty());
 }

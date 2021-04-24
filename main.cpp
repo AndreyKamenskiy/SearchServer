@@ -1,4 +1,5 @@
 #include "search_server.h"
+#include "test_example_functions.h"
 
 #include <iostream>
 #include <string>
@@ -14,12 +15,12 @@ int main() {
     //string stop_words = "and with"s;
     //SearchServer server1();
 
-    
-    //SearchServer search_server(string_view("and with"));
+    //test_all();
+    SearchServer search_server("and with"s);
 
-    string stops = "and with"s;
+    /*string stops = "and with"s;
     string_view view(stops);
-    SearchServer search_server(view);
+    SearchServer search_server(view);*/
 
     int id = 0;
     for (
