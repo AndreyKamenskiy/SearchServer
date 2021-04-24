@@ -1,6 +1,7 @@
 #include "string_processing.h"
 #include <vector>
 #include <string>
+#include <string_view>
 
 bool HasSpecialSymbols(const std::string& text) {
     for (char ch : text) {
@@ -11,23 +12,25 @@ bool HasSpecialSymbols(const std::string& text) {
     return false;
 }
 
-std::vector<std::string> SplitIntoWords(const std::string& text) {
-    std::vector<std::string> words;
-    std::string word;
-    for (const char c : text) {
-        if (c == ' ') {
-            if (!word.empty()) {
-                words.push_back(word);
-                word.clear();
+std::vector<std::string_view> SplitIntoWords(const std::string_view text) {
+    std::vector<std::string_view> words;
+    size_t word_begin = 0;
+    int wordLength = 0;
+    //todo : chacnge to string_view constructor constexpr basic_string_view(const CharT* s, size_type count);
+    for (size_t i = 0; i < text.size(); ++i) {
+        if (text[i] == ' ') {
+            word_begin = i + 1;
+            if (wordLength > 0) {
+                words.push_back(std::string_view(&text[word_begin], wordLength));
+                wordLength = 0;
             }
         } else {
-            word += c;
+            ++wordLength;
         }
     }
-    if (!word.empty()) {
-        words.push_back(word);
+    if (wordLength > 0) {
+        words.push_back(std::string_view(&text[word_begin], wordLength));
     }
-
     return words;
 }
 

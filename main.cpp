@@ -7,7 +7,15 @@
 using namespace std;
 
 int main() {
-    SearchServer search_server("and with"s);
+    // проверяем конструктор
+    // у нас есть два конструктора:
+    // 1 на вход подается строка(string_view)
+    // 2 на вход подается контейнер из string_view
+    //string stop_words = "and with"s;
+    //SearchServer server1();
+
+
+    SearchServer search_server("and with");
 
     int id = 0;
     for (

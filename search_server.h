@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cmath>
 #include <execution>
+#include <string_view>
 
 #include "document.h"
 #include "string_processing.h"
@@ -21,7 +22,7 @@ public:
     {
     }
 
-    explicit SearchServer(const std::string& stop_words_text);
+    explicit SearchServer(const std::string_view stop_words_text);
 
     void AddDocument(int document_id, const std::string& document, DocumentStatus status, const std::vector<int>& ratings);
 

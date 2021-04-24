@@ -8,8 +8,9 @@ using namespace std;
 #include "log_duration.h"
 #include <iostream>
 #include <execution>
+#include <string_view>
 
-    SearchServer::SearchServer(const string& stop_words_text)
+    SearchServer::SearchServer(const string_view stop_words_text)
         : SearchServer(SplitIntoWords(stop_words_text))
     {
     }
