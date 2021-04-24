@@ -20,10 +20,6 @@ using namespace std;
     {
     }
 
-    void SearchServer::AddDocument(int document_id, const string& document, DocumentStatus status, const vector<int>& ratings) {
-        SearchServer::AddDocument(document_id, std::string_view(document), status, ratings);
-    }
-
     void SearchServer::AddDocument(int document_id, const string_view& document_view, DocumentStatus status, const vector<int>& ratings) {
         if ((document_id < 0) || (documents_.count(document_id) > 0)) {
             throw invalid_argument("Invalid document_id"s);

@@ -31,8 +31,6 @@ public:
 
     explicit SearchServer(const std::string_view& stop_words_view);
 
-    void AddDocument(int document_id, const std::string& document, DocumentStatus status, const std::vector<int>& ratings);
-
     void AddDocument(int document_id, const std::string_view& document, DocumentStatus status, const std::vector<int>& ratings);
 
     template <typename DocumentPredicate>

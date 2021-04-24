@@ -17,6 +17,7 @@ int main() {
 
     //test_all();
     SearchServer search_server("and with"s);
+    search_server.AddDocument(0, "белый кот и модный ошейник", DocumentStatus::ACTUAL, { 1, 2, 3, 4 });
 
     /*string stops = "and with"s;
     string_view view(stops);
