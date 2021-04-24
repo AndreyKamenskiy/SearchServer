@@ -9,11 +9,11 @@ std::vector<std::string_view> SplitIntoWords(const std::string_view text) {
     int wordLength = 0;
     for (size_t i = 0; i < text.size(); ++i) {
         if (text[i] == ' ') {
-            word_begin = i + 1;
             if (wordLength > 0) {
                 words.push_back(std::string_view(&text[word_begin], wordLength));
                 wordLength = 0;
             }
+            word_begin = i + 1;
         } else {
             ++wordLength;
         }

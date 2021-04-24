@@ -98,7 +98,8 @@ public:
         }
         {
             using namespace std;
-            const std::string_view emptyStringView = ""s;
+            string empty = ""s;
+            const std::string_view emptyStringView = empty;
             std::vector<std::string_view> temp(query.plus_words.size(), emptyStringView);
             std::transform(policy,
                 query.plus_words.begin(), query.plus_words.end(),
