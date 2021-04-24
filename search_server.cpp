@@ -29,7 +29,6 @@ using namespace std;
             throw invalid_argument("Invalid document_id"s);
         }
         const auto words = SearchServer::saveUniqueWords(SplitIntoWordsNoStop(document_view));
-
         const double inv_word_count = 1.0 / words.size();
         for (const string_view& word : words) {
             word_to_document_freqs_[word][document_id] += inv_word_count;
@@ -59,7 +58,7 @@ using namespace std;
         return SearchServer::MatchDocument(std::execution::seq, raw_query, document_id);
     }
 
-    const map<string, double>& SearchServer::GetWordFrequencies(int document_id) const
+    const map<string_view, double>& SearchServer::GetWordFrequencies(int document_id) const
     {
         if (documents_.count(document_id) == 0) {
            //if a document with given id does not exist

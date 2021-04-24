@@ -65,7 +65,7 @@ public:
 
     int GetDocumentCount() const;
 
-    const std::map<std::string, double>& GetWordFrequencies(int document_id) const;
+    const std::map<std::string_view, double>& GetWordFrequencies(int document_id) const;
 
 
     template<class ExecutionPolicy>
@@ -182,7 +182,7 @@ private:
     std::map<int, DocumentData> documents_;
     std::set<int> document_ids_;
 
-    const std::map<std::string, double> emty_map_;
+    const std::map<std::string_view, double> emty_map_;
 
 
     bool IsStopWord(const std::string_view& word) const;
