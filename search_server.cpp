@@ -11,12 +11,12 @@ using namespace std;
 #include <string_view>
 
     SearchServer::SearchServer(const string_view stop_words_view)
-        : SearchServer(SplitIntoWords(stop_words_view))
+        : SearchServer(SearchServer::saveUniqueWords(SplitIntoWords(stop_words_view)))
     {
     }
 
     SearchServer::SearchServer(const string stop_words_text)
-        : SearchServer(SplitIntoWords(stop_words_text))
+        : SearchServer(SearchServer::saveUniqueWords(SplitIntoWords(stop_words_text)))
     {
     }
 
@@ -63,7 +63,7 @@ using namespace std;
         return document_to_word_freqs_.at(document_id);
     }
 
-    bool SearchServer::IsStopWord(const string& word) const {
+    bool SearchServer::IsStopWord(const string_view& word) const {
         return stop_words_.count(word) > 0;
     }
 
