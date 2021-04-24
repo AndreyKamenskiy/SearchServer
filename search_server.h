@@ -22,10 +22,9 @@ public:
     {
     }
 
-    // возможно придется добавить конструктор, который будт принимать контейнер строк и переделывать его в 
-    // контейнер string_view
+    explicit SearchServer(const std::string stop_words_text);
 
-    explicit SearchServer(const std::string_view stop_words_text);
+    explicit SearchServer(const std::string_view stop_words_view);
 
     void AddDocument(int document_id, const std::string& document, DocumentStatus status, const std::vector<int>& ratings);
 
@@ -184,16 +183,16 @@ private:
     static int ComputeAverageRating(const std::vector<int>& ratings);
 
     struct QueryWord {
-        std::string data;
+        std::string_view data;
         bool is_minus;
         bool is_stop;
     };
 
-    QueryWord ParseQueryWord(const std::string& text) const;
+    QueryWord ParseQueryWord(const std::string_view& text) const;
 
     struct Query {
-        std::set<std::string> plus_words;
-        std::set<std::string> minus_words;
+        std::set<std::string_view> plus_words;
+        std::set<std::string_view> minus_words;
     };
     Query ParseQuery(const std::string_view& text) const;
 

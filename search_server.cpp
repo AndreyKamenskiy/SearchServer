@@ -10,7 +10,12 @@ using namespace std;
 #include <execution>
 #include <string_view>
 
-    SearchServer::SearchServer(const string_view stop_words_text)
+    SearchServer::SearchServer(const string_view stop_words_view)
+        : SearchServer(SplitIntoWords(stop_words_view))
+    {
+    }
+
+    SearchServer::SearchServer(const string stop_words_text)
         : SearchServer(SplitIntoWords(stop_words_text))
     {
     }
@@ -91,26 +96,24 @@ using namespace std;
         return rating_sum / static_cast<int>(ratings.size());
     }
 
-    SearchServer::QueryWord SearchServer::ParseQueryWord(const string& text) const {
+    SearchServer::QueryWord SearchServer::ParseQueryWord(const string_view& text) const {
         if (text.empty()) {
             throw invalid_argument("Query word is empty"s);
         }
-        string word = text;
+        string_view word = text;
         bool is_minus = false;
         if (word[0] == '-') {
             is_minus = true;
             word = word.substr(1);
         }
         if (word.empty() || word[0] == '-' || !IsValidWord(word)) {
-            throw invalid_argument("Query word "s + text + " is invalid");
+            throw invalid_argument("Query word "s + static_cast<string>(text) + " is invalid");
         }
 
-        return {word, is_minus, IsStopWord(word)};
+        return {word, is_minus, IsStopWord(static_cast<string>(word))};
     }
 
     SearchServer::Query SearchServer::ParseQuery(const string_view& text) const {
-        //todo : change to string_View. to avoid copy of strings.
-
         SearchServer::Query result;
         for (const string_view& word : SplitIntoWords(text)) {
             const auto query_word = ParseQueryWord(word);

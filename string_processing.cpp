@@ -7,7 +7,6 @@ std::vector<std::string_view> SplitIntoWords(const std::string_view text) {
     std::vector<std::string_view> words;
     size_t word_begin = 0;
     int wordLength = 0;
-    //todo : chacnge to string_view constructor constexpr basic_string_view(const CharT* s, size_type count);
     for (size_t i = 0; i < text.size(); ++i) {
         if (text[i] == ' ') {
             word_begin = i + 1;
