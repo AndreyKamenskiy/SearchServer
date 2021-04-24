@@ -189,7 +189,7 @@ private:
 
     static bool IsValidWord(const std::string_view& word);
 
-    std::vector<std::string> SplitIntoWordsNoStop(const std::string_view& text) const;
+    std::vector<std::string_view> SplitIntoWordsNoStop(const std::string_view& text) const;
 
     static int ComputeAverageRating(const std::vector<int>& ratings);
 

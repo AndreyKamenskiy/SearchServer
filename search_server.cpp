@@ -21,22 +21,22 @@ using namespace std;
     }
 
     void SearchServer::AddDocument(int document_id, const string& document, DocumentStatus status, const vector<int>& ratings) {
-        if ((document_id < 0) || (documents_.count(document_id) > 0)) {
-            throw invalid_argument("Invalid document_id"s);
-        }
-        const auto words = SplitIntoWordsNoStop(document);
-
-        const double inv_word_count = 1.0 / words.size();
-        for (const string& word : words) {
-            word_to_document_freqs_[word][document_id] += inv_word_count;
-            document_to_word_freqs_[document_id][word] += inv_word_count;
-        }
-        documents_.emplace(document_id, DocumentData{ComputeAverageRating(ratings), status});
-        document_ids_.insert(document_id);
+        SearchServer::AddDocument(document_id, std::string_view(document), status, ratings);
     }
 
     void SearchServer::AddDocument(int document_id, const string_view& document_view, DocumentStatus status, const vector<int>& ratings) {
+        if ((document_id < 0) || (documents_.count(document_id) > 0)) {
+            throw invalid_argument("Invalid document_id"s);
+        }
+        const auto words = SearchServer::saveUniqueWords(SplitIntoWordsNoStop(document_view));
 
+        const double inv_word_count = 1.0 / words.size();
+        for (const string_view& word : words) {
+            word_to_document_freqs_[word][document_id] += inv_word_count;
+            document_to_word_freqs_[document_id][word] += inv_word_count;
+        }
+        documents_.emplace(document_id, DocumentData{ ComputeAverageRating(ratings), status });
+        document_ids_.insert(document_id);
     }
 
 
@@ -78,13 +78,13 @@ using namespace std;
     }
 
     vector<string_view> SearchServer::SplitIntoWordsNoStop(const string_view& text) const {
-        vector<string> words;
+        vector<string_view> words;
         for (const string_view& word : SplitIntoWords(text)) {
             if (!IsValidWord(word)) {
                 throw invalid_argument("Word "s + static_cast<string>(word) + " is invalid"s);
             }
-            if (!IsStopWord(static_cast<string>(word))) {
-                words.push_back(static_cast<string>(word));
+            if (!IsStopWord(word)) {
+                words.push_back(word);
             }
         }
         return words;
