@@ -19,6 +19,10 @@ public:
         : id_(id),  stream_(stream) {
     }
 
+    explicit LogDuration(const std::string_view id, std::ostream& stream = std::cerr)
+        : id_(static_cast<std::string>(id)), stream_(stream) {
+    }
+
     ~LogDuration() {
         using namespace std::chrono;
         using namespace std::literals;

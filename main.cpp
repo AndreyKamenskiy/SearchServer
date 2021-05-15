@@ -15,7 +15,7 @@ string GenerateWord(mt19937& generator, int max_length) {
     string word;
     word.reserve(length);
     for (int i = 0; i < length; ++i) {
-        word.push_back(uniform_int_distribution('a', 'z')(generator));
+        word.push_back(uniform_int_distribution(int('a'), int('z'))(generator));
     }
     return word;
 }
@@ -65,7 +65,7 @@ void Test(string_view mark, const SearchServer& search_server, const vector<stri
     cout << total_relevance << endl;
 }
 
-#define TEST(policy) Test(#mode, search_server, queries, execution::policy)
+#define TEST(policy) Test(#policy, search_server, queries, execution::policy)
 
 int main() {
     mt19937 generator;
