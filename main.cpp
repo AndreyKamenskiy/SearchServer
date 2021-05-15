@@ -1,5 +1,5 @@
 #include "search_server.h"
-
+#include "process_queries.h"
 #include "log_duration.h"
 
 #include <execution>
