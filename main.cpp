@@ -69,7 +69,7 @@ void Test(string_view mark, const SearchServer& search_server, const vector<stri
 
 int main() {
     mt19937 generator;
-
+    cout << "start to generate test data"s << endl;
     const auto dictionary = GenerateDictionary(generator, 1000, 10);
     const auto documents = GenerateQueries(generator, dictionary, 10'000, 70);
 
@@ -78,8 +78,8 @@ int main() {
         search_server.AddDocument(i, documents[i], DocumentStatus::ACTUAL, { 1, 2, 3 });
     }
 
-    const auto queries = GenerateQueries(generator, dictionary, 100, 70);
-
+    const auto queries = GenerateQueries(generator, dictionary, 30, 70);
+    cout << "start testing"s << endl;
     TEST(seq);
     TEST(par);
 }
