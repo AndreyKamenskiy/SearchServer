@@ -12,8 +12,6 @@ public:
             : ref_to_value(ref_to_value_),
             m_(m)
         {
-            //std::cout << ref_to_value << '\n';
-            //std::cout <<"key = "s << key << " ref to value = " <<  &ref_to_value << " ref to dict = " << &map_ << " dict.size() = " << map_.size() <<'\n' << std::endl;
         }
 
         ~Access() {
@@ -55,7 +53,6 @@ public:
 private:
     size_t getBucketNum(const Key& key) {
         // номером части словаря будет остаток от деления ключа на количество ключей   
-        //std::cout << key << " % "s << bucket_count_ << " = "s << key % bucket_count_ << '\n';
         return key % bucket_count_;
     }
 

@@ -12,6 +12,7 @@
 #include "document.h"
 #include "string_processing.h"
 #include "log_duration.h"
+#include "concurrent_map.h"
 
 const int MAX_RESULT_DOCUMENT_COUNT = 5;
 
@@ -233,11 +234,11 @@ private:
     std::vector<Document> FindAllDocuments(std::execution::parallel_policy, const Query& query, DocumentPredicate document_predicate) const {
 
         using namespace std::string_literals;
-        std::map<int, double> document_to_relevance;
+        ConcurrentMap<int, double> document_to_relevance_concurrent(25);
 
         //uint64_t time
 
-        { LOG_DURATION("Fill document_to_relevance"s);
+        { //LOG_DURATION("Fill document_to_relevance"s);
             //переберем все плюс-слова запроса.
             for (const std::string_view& word : query.plus_words) {
                 if (word_to_document_freqs_.count(word) == 0) {
@@ -248,11 +249,13 @@ private:
                 for (const auto [document_id, term_freq] : word_to_document_freqs_.at(word)) {
                     const auto& document_data = documents_.at(document_id);
                     if (document_predicate(document_id, document_data.status, document_data.rating)) {
-                        document_to_relevance[document_id] += term_freq * inverse_document_freq;
+                        document_to_relevance_concurrent[document_id].ref_to_value += term_freq * inverse_document_freq;
                     }
                 }
             }
         }
+
+        std::map<int, double> document_to_relevance = document_to_relevance_concurrent.BuildOrdinaryMap();
 
         //Переберем все минус-слова. Удалим найденные документы с минус-словами.
         {   //LOG_DURATION("Erase documents with minus words"s); // about .0ms for operation
