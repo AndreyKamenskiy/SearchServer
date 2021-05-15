@@ -112,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="document.h" />
+    <ClInclude Include="concurrent_map.h" />
     <ClInclude Include="process_queries.h" />
     <ClInclude Include="remove_duplicates.h" />
     <ClInclude Include="log_duration.h" />

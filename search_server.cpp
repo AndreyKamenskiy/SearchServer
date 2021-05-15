@@ -34,20 +34,13 @@ using namespace std;
         document_ids_.insert(document_id);
     }
 
-
     int SearchServer::GetDocumentCount() const {
         return documents_.size();
     }
 
-
     tuple<vector<string_view>, DocumentStatus> SearchServer::MatchDocument(const string_view& raw_query, int document_id) const {
         return SearchServer::MatchDocument(std::execution::seq, raw_query, document_id);
     }
-
-    /*tuple<vector<string_view>, DocumentStatus> SearchServer::MatchDocument(const string& raw_query, int document_id) const {
-        return SearchServer::MatchDocument(std::execution::seq, static_cast<string_view>(raw_query), document_id);
-    }*/
-
 
     const map<string_view, double>& SearchServer::GetWordFrequencies(int document_id) const
     {

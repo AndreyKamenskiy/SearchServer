@@ -38,17 +38,20 @@ public:
         //LOG_DURATION_STREAM("Operation time", std::cerr);
         using namespace std;
         const auto query = ParseQuery(raw_query);
+        
+        auto matched_documents = FindAllDocuments(policy, query, document_predicate);
 
-        auto matched_documents = FindAllDocuments(query, document_predicate);
-
-        sort(matched_documents.begin(), matched_documents.end(), [](const Document& lhs, const Document& rhs) {
-            if (abs(lhs.relevance - rhs.relevance) < 1e-6) {
-                return lhs.rating > rhs.rating;
-            }
-            else {
-                return lhs.relevance > rhs.relevance;
-            }
-            });
+        {
+            //LOG_DURATION("sort"s);
+            sort(matched_documents.begin(), matched_documents.end(), [](const Document& lhs, const Document& rhs) {
+                if (abs(lhs.relevance - rhs.relevance) < 1e-6) {
+                    return lhs.rating > rhs.rating;
+                }
+                else {
+                    return lhs.relevance > rhs.relevance;
+                }
+                });
+        }
         if (matched_documents.size() > MAX_RESULT_DOCUMENT_COUNT) {
             matched_documents.resize(MAX_RESULT_DOCUMENT_COUNT);
         }
@@ -86,7 +89,6 @@ public:
     int GetDocumentCount() const;
 
     const std::map<std::string_view, double>& GetWordFrequencies(int document_id) const;
-
 
     template<class ExecutionPolicy>
     std::tuple<std::vector<std::string_view>, DocumentStatus> MatchDocument(ExecutionPolicy&& policy, const std::string_view& raw_query, int document_id) const {
@@ -225,17 +227,65 @@ private:
     };
     Query ParseQuery(const std::string_view& text) const;
 
-
     double ComputeWordInverseDocumentFreq(const std::string_view& word) const;
 
     template <typename DocumentPredicate>
-    std::vector<Document> FindAllDocuments(const Query& query, DocumentPredicate document_predicate) const {
+    std::vector<Document> FindAllDocuments(std::execution::parallel_policy, const Query& query, DocumentPredicate document_predicate) const {
+
+        using namespace std::string_literals;
         std::map<int, double> document_to_relevance;
+
+        //uint64_t time
+
+        { LOG_DURATION("Fill document_to_relevance"s);
+            //переберем все плюс-слова запроса.
+            for (const std::string_view& word : query.plus_words) {
+                if (word_to_document_freqs_.count(word) == 0) {
+                    continue;
+                }
+                const double inverse_document_freq = ComputeWordInverseDocumentFreq(word);
+                //переберем все документы с этим словом
+                for (const auto [document_id, term_freq] : word_to_document_freqs_.at(word)) {
+                    const auto& document_data = documents_.at(document_id);
+                    if (document_predicate(document_id, document_data.status, document_data.rating)) {
+                        document_to_relevance[document_id] += term_freq * inverse_document_freq;
+                    }
+                }
+            }
+        }
+
+        //Переберем все минус-слова. Удалим найденные документы с минус-словами.
+        {   //LOG_DURATION("Erase documents with minus words"s); // about .0ms for operation
+            for (const std::string_view& word : query.minus_words) {
+                if (word_to_document_freqs_.count(word) == 0) {
+                    continue;
+                }
+                for (const auto [document_id, _] : word_to_document_freqs_.at(word)) {
+                    document_to_relevance.erase(document_id);
+                }
+            }
+        }
+
+        std::vector<Document> matched_documents;
+        {   //LOG_DURATION("fill matched_documents"s); // about 13ms for operation
+            for (const auto [document_id, relevance] : document_to_relevance) {
+                matched_documents.push_back({ document_id, relevance, documents_.at(document_id).rating });
+            }
+        }
+        return matched_documents;
+    }
+
+    template <typename DocumentPredicate>
+    std::vector<Document> FindAllDocuments(std::execution::sequenced_policy, const Query& query, DocumentPredicate document_predicate) const {
+        std::map<int, double> document_to_relevance;
+        
+        //переберем все плюс-слова запроса.
         for (const std::string_view& word : query.plus_words) {
             if (word_to_document_freqs_.count(word) == 0) {
                 continue;
             }
             const double inverse_document_freq = ComputeWordInverseDocumentFreq(word);
+            //переберем все документы с этим словом
             for (const auto [document_id, term_freq] : word_to_document_freqs_.at(word)) {
                 const auto& document_data = documents_.at(document_id);
                 if (document_predicate(document_id, document_data.status, document_data.rating)) {
@@ -243,23 +293,22 @@ private:
                 }
             }
         }
-
-        for (const std::string_view& word : query.minus_words) {
-            if (word_to_document_freqs_.count(word) == 0) {
-                continue;
+        //Переберем все минус-слова. Удалим найденные документы с минус-словами.
+            for (const std::string_view& word : query.minus_words) {
+                if (word_to_document_freqs_.count(word) == 0) {
+                    continue;
+                }
+                for (const auto [document_id, _] : word_to_document_freqs_.at(word)) {
+                    document_to_relevance.erase(document_id);
+                }
             }
-            for (const auto [document_id, _] : word_to_document_freqs_.at(word)) {
-                document_to_relevance.erase(document_id);
-            }
-        }
 
         std::vector<Document> matched_documents;
-        for (const auto [document_id, relevance] : document_to_relevance) {
-            matched_documents.push_back({ document_id, relevance, documents_.at(document_id).rating });
-        }
+            for (const auto [document_id, relevance] : document_to_relevance) {
+                matched_documents.push_back({ document_id, relevance, documents_.at(document_id).rating });
+            }
         return matched_documents;
     }
-
 
     // принимает контейнер из string_view, проверяет есть ли такие слова в базе сервера (words_ и all_words);
     // сохраняет отсутствующие слова 
