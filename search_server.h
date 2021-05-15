@@ -33,8 +33,8 @@ public:
 
     void AddDocument(int document_id, const std::string_view& document, DocumentStatus status, const std::vector<int>& ratings);
 
-    template <typename DocumentPredicate>
-    std::vector<Document> FindTopDocuments(const std::string_view& raw_query, DocumentPredicate document_predicate) const {
+    template <typename DocumentPredicate, class ExecutionPolicy>
+    std::vector<Document> FindTopDocuments(ExecutionPolicy&& policy, const std::string_view& raw_query, DocumentPredicate document_predicate) const {
         //LOG_DURATION_STREAM("Operation time", std::cerr);
         using namespace std;
         const auto query = ParseQuery(raw_query);
@@ -56,9 +56,32 @@ public:
         return matched_documents;
     }
 
-    std::vector<Document> FindTopDocuments(const std::string_view& raw_query, DocumentStatus status) const;
+    template < class ExecutionPolicy>
+    std::vector<Document> FindTopDocuments(ExecutionPolicy&& policy, const std::string_view& raw_query, DocumentStatus status) const {
+        return FindTopDocuments(policy, raw_query, [status](int document_id, DocumentStatus document_status, int rating) {
+            return document_status == status;
+            });
+    }
 
-    std::vector<Document> FindTopDocuments(const std::string_view& raw_query) const;
+    template < class ExecutionPolicy>
+    std::vector<Document> FindTopDocuments(ExecutionPolicy&& policy, const std::string_view& raw_query) const {
+        return FindTopDocuments(policy, raw_query, DocumentStatus::ACTUAL);
+    }
+
+    template <typename DocumentPredicate>
+    std::vector<Document> FindTopDocuments(const std::string_view& raw_query, DocumentPredicate document_predicate) const {
+        return FindTopDocuments(std::execution::seq, raw_query, document_predicate);
+    }
+
+    std::vector<Document> SearchServer::FindTopDocuments(const std::string_view& raw_query, DocumentStatus status) const {
+        return FindTopDocuments(std::execution::seq, raw_query, [status](int document_id, DocumentStatus document_status, int rating) {
+            return document_status == status;
+            });
+    }
+
+    std::vector<Document> SearchServer::FindTopDocuments(const std::string_view& raw_query) const {
+        return FindTopDocuments(std::execution::seq, raw_query, DocumentStatus::ACTUAL);
+    }
 
     int GetDocumentCount() const;
 
@@ -120,13 +143,6 @@ public:
     }
 
     std::tuple<std::vector<std::string_view>, DocumentStatus> MatchDocument(const std::string_view& raw_query, int document_id) const;
-
-    /*template<class ExecutionPolicy>
-    std::tuple<std::vector<std::string_view>, DocumentStatus> MatchDocument(ExecutionPolicy&& policy, const std::string& raw_query, int document_id) const {
-        return MatchDocument(policy, static_cast<string_view>(raw_query), document_id);
-    }
-
-    std::tuple<std::vector<std::string_view>, DocumentStatus> MatchDocument(const std::string& raw_query, int document_id) const;*/
 
     template<class ExecutionPolicy>
     void RemoveDocument(ExecutionPolicy&& policy, int document_id) {
